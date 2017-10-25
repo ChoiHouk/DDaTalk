@@ -1,6 +1,8 @@
 package com.example.acer.login.Profile_Tab.Home_Related;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -57,8 +59,9 @@ public class TogetherItemView extends LinearLayout {
         textView2.setText(content);
     }
 
-    public void setImageView(int resId){
-        imageView.setImageResource(resId);
+    public void setImageView(String imgPath){
+        Bitmap myBitmap = BitmapFactory.decodeFile(imgPath);
+        imageView.setImageBitmap(myBitmap);
     }
 
     public void setTogether_tv(int together){

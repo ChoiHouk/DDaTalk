@@ -504,7 +504,6 @@ public class MyPage_Fragment_Sub extends Fragment {
     }
 
 
-    //디비에 유저이미지 저장하기 메소드
     public void delete() {
 
         requestQueue = Volley.newRequestQueue(getContext());

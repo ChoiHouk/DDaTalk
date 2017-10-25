@@ -22,6 +22,7 @@ import com.example.acer.login.Login_Related.SharedPrefManager;
 import com.example.acer.login.Profile_Tab.Home_reply.ReplyActivity;
 import com.example.acer.login.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,6 +78,10 @@ public class TogetherItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+
+
+
         final Context context = parent.getContext();
         sharedPrefManager = SharedPrefManager.getInstance(context);
         rq = Volley.newRequestQueue(context);
@@ -91,6 +96,11 @@ public class TogetherItemAdapter extends BaseAdapter {
         }
         final TogetherItemView finalView = view;
         final TogetherItem item = items.get(position);
+
+        //서버에서 유저 이미지 가져오기
+        String emailOfWriting = item.getEmail();
+        getimgPath(emailOfWriting, item);
+
 
         Button together_button = (Button)view.findViewById(R.id.together_button);
         together_button.setOnClickListener(new View.OnClickListener() {
@@ -155,7 +165,7 @@ public class TogetherItemAdapter extends BaseAdapter {
 
         view.setEmail(item.getEmail());
         view.setContent(item.getContent());
-        view.setImageView(item.getResId());
+        view.setImageView(item.getimgPath());
         view.setTogether_tv(item.getTogether());
         view.setComment_Tv(item.getComment());
         view.setRental_spot(item.getRental_spot());
@@ -163,6 +173,40 @@ public class TogetherItemAdapter extends BaseAdapter {
 
         return view;
 
+    }
+
+    //디비에서 유저이미지 가져오기 메소드
+    private void getimgPath(final String emailOfWriting, final TogetherItem item){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.URL_RECEIVE_IMG, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonobject = new JSONObject(response);
+                    JSONArray jsonArray = jsonobject.getJSONArray("user");
+                    JSONObject data = jsonArray.getJSONObject(0);
+
+                    String userimg = data.getString("userimg");
+                    item.setimgPath(userimg);
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> parameters = new HashMap<String, String>();
+                parameters.put("userEmail", emailOfWriting);
+                return parameters;
+            }
+        };
+        rq.add(stringRequest);
     }
 
     private void checkToWithButton(int writing_no, Context context, SharedPrefManager sharedPrefManager, final TogetherItem item,final TogetherItemView togetherItemView,
