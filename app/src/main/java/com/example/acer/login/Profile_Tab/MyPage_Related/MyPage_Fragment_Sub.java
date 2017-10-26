@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +32,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.acer.login.BuildConfig;
@@ -43,14 +42,9 @@ import com.example.acer.login.Login_Related.SharedPrefManager;
 import com.example.acer.login.Profile_Tab.MyPage_Fragment;
 import com.example.acer.login.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -75,15 +69,17 @@ public class MyPage_Fragment_Sub extends Fragment {
 
     private Uri mImageCaptureUri;
     TextView nameView,mtextView1, mtextView2, mtextView3;
-    String name, birthday, email, absolutepath;
+    String name, birthday, email, absolutepath, userimg;
 
     String HttpUrl = "http://104.198.211.126/insertUserimgUri.php";
     String HttpUrl2 = "http://104.198.211.126/getUserimgUri.php";
     String HttpUrl3 = "http://104.198.211.126/deleteuser.php";
 
+    private ImageLoader mImageLoader;
+
     Bitmap bm;
 
-    ImageView user_profile;
+    NetworkImageView user_profile;
     ImageButton photo_btn;
 
     ProgressDialog progressDialog;
@@ -97,6 +93,7 @@ public class MyPage_Fragment_Sub extends Fragment {
         checkPermissions();
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -113,7 +110,9 @@ public class MyPage_Fragment_Sub extends Fragment {
         mtextView1 = (TextView)rootView.findViewById(textView7);
         mtextView2 = (TextView)rootView.findViewById(R.id.textView9);
         mtextView3 = (TextView)rootView.findViewById(R.id.textView11);
-        user_profile = (ImageView)rootView.findViewById(R.id.user_profile);
+
+        user_profile = (NetworkImageView)rootView.findViewById(R.id.user_profile);
+        //user_profile = (ImageView)rootView.findViewById(R.id.user_profile);
 
         name = SharedPrefManager.getInstance(getActivity().getApplicationContext()).getUsername();
         birthday = SharedPrefManager.getInstance(getActivity().getApplicationContext()).getUserBirthday();
@@ -132,6 +131,7 @@ public class MyPage_Fragment_Sub extends Fragment {
 
         //유저 이미지 가져오기 실행
         ReceiveImg();
+        user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php", mImageLoader);
 
         //뒤로가기
         back_btn.setOnClickListener(new View.OnClickListener(){
@@ -200,8 +200,6 @@ public class MyPage_Fragment_Sub extends Fragment {
         });
 
 
-
-
         return rootView;
     }
 
@@ -265,6 +263,8 @@ public class MyPage_Fragment_Sub extends Fragment {
             {
                 try{
                     mImageCaptureUri = data.getData();
+                    bm = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), mImageCaptureUri);
+
                     Log.d("ddaTalk", mImageCaptureUri.getPath().toString());
                 }
                 catch (Exception e) {
@@ -294,15 +294,24 @@ public class MyPage_Fragment_Sub extends Fragment {
                 {
                     return;
                 }
+
                 final Bundle extras = data.getExtras();
                 //crop된 이미지를 저장하기 위한 file경로
+
+                userimg = getStringImage(bm);
+
+                //파일을 db로 보내기
+                SendImg(userimg);
+
                 String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DDaTalk/"+System.currentTimeMillis()+".jpg";
+
 
 
 
 
                 if(extras != null)
                 {
+
                     Bitmap photo = extras.getParcelable("data");
                     user_profile.setImageBitmap(photo);
 
@@ -311,12 +320,7 @@ public class MyPage_Fragment_Sub extends Fragment {
                     break;
                 }
 
-                //파일을 db로 보내기
-                try {
-                    SendImg();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
 
 
                 File f = new File(mImageCaptureUri.getPath());
@@ -426,14 +430,7 @@ public class MyPage_Fragment_Sub extends Fragment {
 
 
     //디비에 유저이미지 저장하기 메소드
-    public void SendImg() throws IOException {
-
-        final Uri imgUri = mImageCaptureUri;
-
-        bm = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), imgUri);
-
-        //이미지를 string으로 인코딩 해주기
-        final String image = getStringImage(bm);
+    public void SendImg(final String userimg) {
 
         requestQueue = Volley.newRequestQueue(getContext());
         StringRequest request = new StringRequest(Request.Method.POST, HttpUrl, new Response.Listener<String>() {
@@ -451,7 +448,7 @@ public class MyPage_Fragment_Sub extends Fragment {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parameters = new HashMap<String, String>();
                 parameters.put("email",email);
-                parameters.put("imgUri", image);
+                parameters.put("imgUri", userimg);
                 return parameters;
             }
         };
@@ -460,39 +457,26 @@ public class MyPage_Fragment_Sub extends Fragment {
 
     }
 
+    //이미지로더
+
+
+
+
     //디비에서 유저이미지 가져오기 메소드
     public void ReceiveImg(){
+        mImageLoader = VolleySingleton.getInstance(getContext()).getImageLoader();
+
         queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                try {
-                    JSONObject jsonobject = new JSONObject(response);
-                    JSONArray jsonArray = jsonobject.getJSONArray("user");
-                    JSONObject data = jsonArray.getJSONObject(0);
-
-                    String userimg = data.getString("userimg");
-                    Uri imgUri = Uri.parse(userimg);
-
-                    try {
-                        bm = MediaStore.Images.Media .getBitmap(getActivity().getApplicationContext().getContentResolver(), imgUri);
-                        user_profile.setImageBitmap(bm);
-                    }
-                    catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
 
                     //서버에서 가져온 이미지 셋팅
-              //       Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
-              //      user_profile.setImageBitmap(myBitmap);
+                 // Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
+                 //      user_profile.setImageBitmap(myBitmap);
 
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -512,37 +496,14 @@ public class MyPage_Fragment_Sub extends Fragment {
     }
 
     //이미지 셋팅작업
-    public String getStringImage(Bitmap bmp) {
+    public String getStringImage(Bitmap bmp){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
-
     }
 
-
-    public Bitmap rotate(Bitmap src, float degree) {
-
-        // Matrix 객체 생성
-        Matrix matrix = new Matrix();
-        // 회전 각도 셋팅
-        matrix.postRotate(degree);
-        // 이미지와 Matrix 를 셋팅해서 Bitmap 객체 생성
-        return Bitmap.createBitmap(src, 0, 0, src.getWidth(),
-                src.getHeight(), matrix, true);
-    }
-
-    public int exifOrientationToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
-            return 90;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
-            return 180;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
-            return 270;
-        }
-        return 0;
-    }
 
 
     public void delete() {

@@ -6,9 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,20 +26,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.acer.login.Login_Related.SharedPrefManager;
 import com.example.acer.login.Profile_Tab.MyPage_Related.ListView_Adapter;
 import com.example.acer.login.Profile_Tab.MyPage_Related.List_writing;
 import com.example.acer.login.Profile_Tab.MyPage_Related.MyPage_Fragment_Sub;
+import com.example.acer.login.Profile_Tab.MyPage_Related.VolleySingleton;
 import com.example.acer.login.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +50,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyPage_Fragment extends Fragment{
+
+    private ImageLoader mImageLoader;
+
+    RequestQueue queue;
 
     ViewGroup rootView;
 
@@ -62,7 +65,8 @@ public class MyPage_Fragment extends Fragment{
 
     ArrayList<HashMap<String, String>> mArrayList;
 
-    ImageView imageView, user_profile;
+    ImageView imageView;
+    NetworkImageView user_profile;
     ImageButton mimageButton;
 
     TextView textView;
@@ -87,7 +91,7 @@ public class MyPage_Fragment extends Fragment{
 
         mArrayList = new ArrayList<>();
 
-        user_profile = (ImageView)rootView.findViewById(R.id.user_profile);
+        user_profile = (NetworkImageView) rootView.findViewById(R.id.user_profile);
         imageView = (ImageView) rootView.findViewById(R.id.imageView4);
         mimageButton = (ImageButton) rootView.findViewById(R.id.imageButton11);
 
@@ -101,6 +105,7 @@ public class MyPage_Fragment extends Fragment{
         useremail = SharedPrefManager.getInstance(getActivity().getApplicationContext()).getUserEmail();
 
         ReceiveImg();
+        user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php", mImageLoader);
 
         textView.setText(username);
 
@@ -232,41 +237,19 @@ public class MyPage_Fragment extends Fragment{
 
     //디비에서 유저이미지 가져오기 메소드
     public void ReceiveImg(){
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+        mImageLoader = VolleySingleton.getInstance(getContext()).getImageLoader();
+
+        queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                try {
-                    JSONObject jsonobject = new JSONObject(response);
-                    JSONArray jsonArray = jsonobject.getJSONArray("user");
-                    JSONObject data = jsonArray.getJSONObject(0);
 
-                    String userimg = data.getString("userimg");
-                    Uri imgUri = Uri.parse(userimg);
-
-                    try {
-                        Bitmap bm = MediaStore.Images.Media .getBitmap(getActivity().getApplicationContext().getContentResolver(), imgUri);
-                        user_profile.setImageBitmap(bm);
-                    }
-                    catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    //이미지 셋팅
-                    //서버에서 가져온 이미지 셋팅
-                 /*   File imgFile = new File(userimg);
-                    if(imgFile.exists())
-                    {
-                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        user_profile.setImageBitmap(myBitmap);
-                    }*/
+                //서버에서 가져온 이미지 셋팅
+                // Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
+                //      user_profile.setImageBitmap(myBitmap);
 
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
             }
         }, new Response.ErrorListener() {
             @Override
