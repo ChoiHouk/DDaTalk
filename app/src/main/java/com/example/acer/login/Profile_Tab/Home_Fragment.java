@@ -76,7 +76,7 @@ public class Home_Fragment extends Fragment {
         progressDialog = new ProgressDialog(rootView.getContext());
         rq = Volley.newRequestQueue(getActivity());
 
-        ReceiveImg();
+    //    ReceiveImg();
 
         progressDialog.setMessage("로딩중.. 좀만 기둘려주떼염");
         progressDialog.show();

@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -296,8 +298,7 @@ public class MyPage_Fragment_Sub extends Fragment {
                 //crop된 이미지를 저장하기 위한 file경로
                 String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DDaTalk/"+System.currentTimeMillis()+".jpg";
 
-                //파일경로를 db로 보내기
-                SendImg(filePath);
+
 
 
                 if(extras != null)
@@ -309,6 +310,15 @@ public class MyPage_Fragment_Sub extends Fragment {
                     absolutepath = filePath;
                     break;
                 }
+
+                //파일을 db로 보내기
+                try {
+                    SendImg();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
                 File f = new File(mImageCaptureUri.getPath());
                 if(f.exists())
                 {
@@ -416,8 +426,15 @@ public class MyPage_Fragment_Sub extends Fragment {
 
 
     //디비에 유저이미지 저장하기 메소드
-    public void SendImg(final String userimg) {
-        final String imgUri = mImageCaptureUri.toString();
+    public void SendImg() throws IOException {
+
+        final Uri imgUri = mImageCaptureUri;
+
+        bm = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), imgUri);
+
+        //이미지를 string으로 인코딩 해주기
+        final String image = getStringImage(bm);
+
         requestQueue = Volley.newRequestQueue(getContext());
         StringRequest request = new StringRequest(Request.Method.POST, HttpUrl, new Response.Listener<String>() {
             @Override
@@ -434,8 +451,7 @@ public class MyPage_Fragment_Sub extends Fragment {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parameters = new HashMap<String, String>();
                 parameters.put("email",email);
-                parameters.put("userimg",userimg);
-                parameters.put("imgUri", imgUri);
+                parameters.put("imgUri", image);
                 return parameters;
             }
         };
@@ -446,7 +462,6 @@ public class MyPage_Fragment_Sub extends Fragment {
 
     //디비에서 유저이미지 가져오기 메소드
     public void ReceiveImg(){
-
         queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl2, new Response.Listener<String>() {
             @Override
@@ -497,6 +512,16 @@ public class MyPage_Fragment_Sub extends Fragment {
     }
 
     //이미지 셋팅작업
+    public String getStringImage(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+
+    }
+
+
     public Bitmap rotate(Bitmap src, float degree) {
 
         // Matrix 객체 생성
