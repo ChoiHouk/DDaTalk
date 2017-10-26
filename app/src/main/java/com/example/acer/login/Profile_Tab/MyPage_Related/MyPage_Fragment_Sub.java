@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -49,6 +48,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.acer.login.R.id.textView7;
 
 public class MyPage_Fragment_Sub extends Fragment {
 
@@ -77,6 +78,8 @@ public class MyPage_Fragment_Sub extends Fragment {
     String HttpUrl = "http://104.198.211.126/insertUserimgUri.php";
     String HttpUrl2 = "http://104.198.211.126/getUserimgUri.php";
     String HttpUrl3 = "http://104.198.211.126/deleteuser.php";
+
+    Bitmap bm;
 
     ImageView user_profile;
     ImageButton photo_btn;
@@ -105,7 +108,7 @@ public class MyPage_Fragment_Sub extends Fragment {
 
         photo_btn = (ImageButton)rootView.findViewById(R.id.photoButton);
         nameView = (TextView)rootView.findViewById(R.id.textView);
-        mtextView1 = (TextView)rootView.findViewById(R.id.textView7);
+        mtextView1 = (TextView)rootView.findViewById(textView7);
         mtextView2 = (TextView)rootView.findViewById(R.id.textView9);
         mtextView3 = (TextView)rootView.findViewById(R.id.textView11);
         user_profile = (ImageView)rootView.findViewById(R.id.user_profile);
@@ -414,7 +417,7 @@ public class MyPage_Fragment_Sub extends Fragment {
 
     //디비에 유저이미지 저장하기 메소드
     public void SendImg(final String userimg) {
-
+        final String imgUri = mImageCaptureUri.toString();
         requestQueue = Volley.newRequestQueue(getContext());
         StringRequest request = new StringRequest(Request.Method.POST, HttpUrl, new Response.Listener<String>() {
             @Override
@@ -432,6 +435,7 @@ public class MyPage_Fragment_Sub extends Fragment {
                 Map<String, String> parameters = new HashMap<String, String>();
                 parameters.put("email",email);
                 parameters.put("userimg",userimg);
+                parameters.put("imgUri", imgUri);
                 return parameters;
             }
         };
@@ -453,10 +457,22 @@ public class MyPage_Fragment_Sub extends Fragment {
                     JSONObject data = jsonArray.getJSONObject(0);
 
                     String userimg = data.getString("userimg");
+                    Uri imgUri = Uri.parse(userimg);
+
+                    try {
+                        bm = MediaStore.Images.Media .getBitmap(getActivity().getApplicationContext().getContentResolver(), imgUri);
+                        user_profile.setImageBitmap(bm);
+                    }
+                    catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
 
                     //서버에서 가져온 이미지 셋팅
-                    Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
-                    user_profile.setImageBitmap(myBitmap);
+              //       Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
+              //      user_profile.setImageBitmap(myBitmap);
 
 
                 } catch (JSONException e) {

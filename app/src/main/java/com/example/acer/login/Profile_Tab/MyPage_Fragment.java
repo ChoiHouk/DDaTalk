@@ -4,10 +4,11 @@ package com.example.acer.login.Profile_Tab;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -39,7 +40,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -230,7 +232,6 @@ public class MyPage_Fragment extends Fragment{
 
     //디비에서 유저이미지 가져오기 메소드
     public void ReceiveImg(){
-
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl2, new Response.Listener<String>() {
             @Override
@@ -241,15 +242,26 @@ public class MyPage_Fragment extends Fragment{
                     JSONObject data = jsonArray.getJSONObject(0);
 
                     String userimg = data.getString("userimg");
+                    Uri imgUri = Uri.parse(userimg);
+
+                    try {
+                        Bitmap bm = MediaStore.Images.Media .getBitmap(getActivity().getApplicationContext().getContentResolver(), imgUri);
+                        user_profile.setImageBitmap(bm);
+                    }
+                    catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     //이미지 셋팅
                     //서버에서 가져온 이미지 셋팅
-                    File imgFile = new File(userimg);
+                 /*   File imgFile = new File(userimg);
                     if(imgFile.exists())
                     {
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                         user_profile.setImageBitmap(myBitmap);
-                    }
+                    }*/
 
 
                 } catch (JSONException e) {
