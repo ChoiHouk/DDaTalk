@@ -43,7 +43,7 @@ public class Home_Fragment extends Fragment {
 
 
     RequestQueue rq;
-    String content, date, email,rental_spot,imgPath;
+    String content, date, email, rental_spot, imgPath;
     int reply_cnt, with_cnt, writing_no;
 
     int get_writing_no, get_reply_cnt;
@@ -74,11 +74,11 @@ public class Home_Fragment extends Fragment {
         progressDialog = new ProgressDialog(rootView.getContext());
         rq = Volley.newRequestQueue(getActivity());
 
-<<<<<<< HEAD
+
         //    ReceiveImg();
-=======
-    //    ReceiveImg();
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
+        //    ReceiveImg();
+
 
         progressDialog.setMessage("로딩중.. 좀만 기둘려주떼염");
         progressDialog.show();
@@ -107,11 +107,11 @@ public class Home_Fragment extends Fragment {
                                         writing_no = obj.getInt("writing_no");
                                         rental_spot = obj.getString("rental_spot");
                                         imgPath = obj.getString("userimg");
-                                        byte [] encodeByte= Base64.decode(imgPath,Base64.DEFAULT);
+                                        byte[] encodeByte = Base64.decode(imgPath, Base64.DEFAULT);
 
-                                        InputStream inputStream  = new ByteArrayInputStream(encodeByte);
-                                        Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
-                                        Writing w = new Writing(content, reply_cnt, with_cnt, date, writing_no, email,rental_spot);
+                                        InputStream inputStream = new ByteArrayInputStream(encodeByte);
+                                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                                        Writing w = new Writing(content, reply_cnt, with_cnt, date, writing_no, email, rental_spot);
 
 
                                         TogetherItem togetherItem = new TogetherItem(w.getWriting_no(), w.getEmail(), w.getContent(), w.getDate(), bitmap,
@@ -134,16 +134,16 @@ public class Home_Fragment extends Fragment {
                     }
                 });
             }
-        },0,60000*3);
+        }, 0, 60000 * 3);
 
         Bundle extra = getArguments();
-        if(extra != null) {
+        if (extra != null) {
             get_writing_no = extra.getInt("writing_no");
             get_reply_cnt = extra.getInt("reply_cnt");
-            adapter.replaceItem(get_writing_no,get_reply_cnt);
+            adapter.replaceItem(get_writing_no, get_reply_cnt);
         }
 
-        editTextSearch = (EditText)rootView.findViewById(R.id.editTextSearch);
+        editTextSearch = (EditText) rootView.findViewById(R.id.editTextSearch);
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -165,11 +165,5 @@ public class Home_Fragment extends Fragment {
         return rootView;
     }
 
-
-
-
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+

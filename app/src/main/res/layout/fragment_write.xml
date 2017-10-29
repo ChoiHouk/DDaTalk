@@ -121,7 +121,7 @@
                 tools:ignore="MissingConstraints,NestedWeights,RtlHardcoded" />
 
             <!--<EditText-->
-<<<<<<< HEAD
+
             <!--android:id="@+id/guView"-->
             <!--android:layout_width="200dp"-->
             <!--android:layout_height="wrap_content"-->
@@ -130,7 +130,7 @@
             <!--android:gravity="start"-->
             <!--android:textSize="15sp"-->
             <!--android:inputType="text" android:layout_marginStart="25dp" />-->
-=======
+
                 <!--android:id="@+id/guView"-->
                 <!--android:layout_width="200dp"-->
                 <!--android:layout_height="wrap_content"-->
@@ -139,9 +139,7 @@
                 <!--android:gravity="start"-->
                 <!--android:textSize="15sp"-->
                 <!--android:inputType="text" android:layout_marginStart="25dp" />-->
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
-
-            <TextView
+ <TextView
                 android:id="@+id/guView"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
@@ -185,7 +183,7 @@
                 tools:ignore="MissingConstraints,NestedWeights,RtlHardcoded" />
 
             <!--<EditText-->
-<<<<<<< HEAD
+
             <!--android:id="@+id/SpotView"-->
             <!--android:layout_width="200dp"-->
             <!--android:layout_height="wrap_content"-->
@@ -194,7 +192,7 @@
             <!--android:inputType="text"-->
             <!--android:gravity="start"-->
             <!--android:textSize="15sp" android:layout_marginStart="10dp"/>-->
-=======
+
                 <!--android:id="@+id/SpotView"-->
                 <!--android:layout_width="200dp"-->
                 <!--android:layout_height="wrap_content"-->
@@ -203,7 +201,6 @@
                 <!--android:inputType="text"-->
                 <!--android:gravity="start"-->
                 <!--android:textSize="15sp" android:layout_marginStart="10dp"/>-->
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
 
             <TextView
                 android:id="@+id/SpotView"

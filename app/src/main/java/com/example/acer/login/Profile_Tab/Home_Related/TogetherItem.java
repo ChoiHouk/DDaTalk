@@ -86,14 +86,7 @@ public class TogetherItem {
     }
 
     public void setimgPath(String imgPath) {this.imgPath = imgPath;}
-<<<<<<< HEAD
 
     public Bitmap getBM(){return this.bm;}
 
 }
-=======
-
-    public Bitmap getBM(){return this.bm;}
-
-}
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda

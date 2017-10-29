@@ -34,8 +34,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.978" />
 
-<<<<<<< HEAD
+<!--<<<<<<< HEAD-->
 </android.support.constraint.ConstraintLayout>
-=======
-</android.support.constraint.ConstraintLayout>
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+<!--=======-->
+<!--</android.support.constraint.ConstraintLayout>-->
+<!--&gt;>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda-->

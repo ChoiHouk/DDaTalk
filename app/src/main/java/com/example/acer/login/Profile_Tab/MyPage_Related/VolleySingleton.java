@@ -14,10 +14,9 @@ public class VolleySingleton {
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
+
     private VolleySingleton(Context context) {
         requestQueue = Volley.newRequestQueue(context);
 
@@ -39,11 +38,10 @@ public class VolleySingleton {
                         // TODO Auto-generated method stub
                         return cache.get(url);
                     }
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
+
                 });
     }
 

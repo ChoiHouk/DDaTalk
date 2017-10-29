@@ -130,10 +130,9 @@ public class MyPage_Fragment_Sub extends Fragment {
         //유저 이미지 가져오기 실행
         ReceiveImg();
         user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php?email="+email, mImageLoader);
-<<<<<<< HEAD
 
-=======
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
+
 
 
 
@@ -165,11 +164,11 @@ public class MyPage_Fragment_Sub extends Fragment {
                 };
                 new AlertDialog.Builder(getContext())
                         .setTitle("업로드할 이미지 선택")
-<<<<<<< HEAD
+
                        // .setPositiveButton("사진촬영", cameraListener)
-=======
+
                         // .setPositiveButton("사진촬영", cameraListener)
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
                         .setNeutralButton("앨범선택",albumListener)
                         .setNegativeButton("취소",cancelListener)
                         .show();
@@ -301,11 +300,11 @@ public class MyPage_Fragment_Sub extends Fragment {
                     Bitmap photo = extras.getParcelable("data");
                     userimg2 = getStringImage(photo);
                     SendImg(userimg2);
-<<<<<<< HEAD
+
                  //   user_profile.setImageBitmap(photo);
-=======
+
                     //   user_profile.setImageBitmap(photo);
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
 
                     storeCropImage(photo, filePath);
                     absolutepath = filePath;
@@ -469,19 +468,18 @@ public class MyPage_Fragment_Sub extends Fragment {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-<<<<<<< HEAD
+
 
                     //서버에서 가져온 이미지 셋팅
                  // Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
                  //      user_profile.setImageBitmap(myBitmap);
 
-=======
 
                 //서버에서 가져온 이미지 셋팅
                 // Bitmap myBitmap = BitmapFactory.decodeFile(userimg);
                 //      user_profile.setImageBitmap(myBitmap);
 
->>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
+
 
 
             }
