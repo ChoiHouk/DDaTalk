@@ -14,7 +14,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -39,7 +38,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.acer.login.BuildConfig;
 import com.example.acer.login.Login_Related.LoginActivity;
 import com.example.acer.login.Login_Related.SharedPrefManager;
-import com.example.acer.login.Profile_Tab.MyPage_Fragment;
 import com.example.acer.login.R;
 
 import java.io.BufferedOutputStream;
@@ -69,7 +67,7 @@ public class MyPage_Fragment_Sub extends Fragment {
 
     private Uri mImageCaptureUri;
     TextView nameView,mtextView1, mtextView2, mtextView3;
-    String name, birthday, email, absolutepath, userimg;
+    String name, birthday, email, absolutepath, userimg, userimg2;
 
     String HttpUrl = "http://104.198.211.126/insertUserimgUri.php";
     String HttpUrl2 = "http://104.198.211.126/getUserimgUri.php";
@@ -124,27 +122,17 @@ public class MyPage_Fragment_Sub extends Fragment {
         mtextView2.setText(birthday);
         mtextView3.setText(email);
 
-        ImageButton back_btn = (ImageButton)rootView.findViewById(R.id.back_btn);
+
         ImageButton deleteButton = (ImageButton)rootView.findViewById(R.id.deleteButton);
         ImageButton logoutButton = (ImageButton)rootView.findViewById(R.id.logoutButton);
         ImageButton photoButton = (ImageButton)rootView.findViewById(R.id.photoButton);
 
         //유저 이미지 가져오기 실행
         ReceiveImg();
-        user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php", mImageLoader);
+        user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php?email="+email, mImageLoader);
 
-        //뒤로가기
-        back_btn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Fragment swichFrag = new MyPage_Fragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, swichFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
 
-        });
+
 
 
         //카메라 버튼 누르면
@@ -174,7 +162,7 @@ public class MyPage_Fragment_Sub extends Fragment {
                 };
                 new AlertDialog.Builder(getContext())
                         .setTitle("업로드할 이미지 선택")
-                        .setPositiveButton("사진촬영", cameraListener)
+                       // .setPositiveButton("사진촬영", cameraListener)
                         .setNeutralButton("앨범선택",albumListener)
                         .setNegativeButton("취소",cancelListener)
                         .show();
@@ -296,29 +284,29 @@ public class MyPage_Fragment_Sub extends Fragment {
                 }
 
                 final Bundle extras = data.getExtras();
+
                 //crop된 이미지를 저장하기 위한 file경로
-
-                userimg = getStringImage(bm);
-
-                //파일을 db로 보내기
-                SendImg(userimg);
-
                 String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DDaTalk/"+System.currentTimeMillis()+".jpg";
-
-
-
-
 
                 if(extras != null)
                 {
 
                     Bitmap photo = extras.getParcelable("data");
-                    user_profile.setImageBitmap(photo);
+                    userimg2 = getStringImage(photo);
+                    SendImg(userimg2);
+                 //   user_profile.setImageBitmap(photo);
 
                     storeCropImage(photo, filePath);
                     absolutepath = filePath;
                     break;
                 }
+
+                userimg = getStringImage(bm);
+                SendImg(userimg);
+
+
+
+
 
 
 

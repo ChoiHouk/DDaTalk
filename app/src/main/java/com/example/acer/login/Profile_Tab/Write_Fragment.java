@@ -109,7 +109,10 @@ public class Write_Fragment extends Fragment{
                 editor.remove("content");
                 editor.commit();
 
+
                 Intent i = new Intent(getActivity().getApplication(), ProfileActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
 
             }
@@ -177,7 +180,7 @@ public class Write_Fragment extends Fragment{
 
             public void onClick(View v) {
                 // Create new fragment and transaction
-               Fragment spotFragment = new FindSpot_Fragment();
+                Fragment spotFragment = new FindSpot_Fragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, spotFragment);
                 transaction.addToBackStack(null);
@@ -214,75 +217,79 @@ public class Write_Fragment extends Fragment{
                 }
                 else
                 {
-                // Showing progress dialog at user registration time.
-                progressDialog.setMessage("Please Wait, We are Inserting Your Data on Server");
-                progressDialog.show();
+                    // Showing progress dialog at user registration time.
+                    progressDialog.setMessage("Please Wait, We are Inserting Your Data on Server");
+                    progressDialog.show();
 
-                // Calling method to get value from EditText.
-                GetValueFromEditText();
+                    // Calling method to get value from EditText.
+                    GetValueFromEditText();
 
-                // Creating string request with post method.
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String ServerResponse) {
+                    // Creating string request with post method.
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpUrl,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String ServerResponse) {
 
-                                progressDialog.dismiss();
+                                    progressDialog.dismiss();
 
-                                // Showing response message coming from server.
-                                Toast.makeText(rootView.getContext(), "성공적으로 글쓰기 완료!", Toast.LENGTH_LONG).show();
+                                    // Showing response message coming from server.
+                                    Toast.makeText(rootView.getContext(), "성공적으로 글쓰기 완료!", Toast.LENGTH_LONG).show();
 
-                                //전송다하고 값 초기화
-                                Content.setText("");
-                                spot.setText("");
-                                gu.setText("");
-                                pref = getActivity().getSharedPreferences("content", MODE_PRIVATE);
-                                editor = pref.edit();
-                                editor.remove("content");
-                                editor.commit();
-
-
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError volleyError) {
-
-                                // Hiding the progress dialog after all task complete.
-                                progressDialog.dismiss();
-
-                                // Showing error message if something goes wrong.
-                                Toast.makeText(rootView.getContext(), volleyError.toString(), Toast.LENGTH_LONG).show();
-                            }
-                        })
+                                    //전송다하고 값 초기화
+                                    Content.setText("");
+                                    spot.setText("");
+                                    gu.setText("");
+                                    pref = getActivity().getSharedPreferences("content", MODE_PRIVATE);
+                                    editor = pref.edit();
+                                    editor.remove("content");
+                                    editor.commit();
 
 
-                {
-                    @Override
-                    protected Map<String, String> getParams() {
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
 
-                        Map<String, String> params = new HashMap<String, String>();
+                                    // Hiding the progress dialog after all task complete.
+                                    progressDialog.dismiss();
 
-                        params.put("content", ContentHolder);
-                        params.put("rental_spot", Rental_spot_Holder);
-                        params.put("email", useremail);
-                        params.put("level", userLevel);
-                        params.put("exp", userExp);
-
-                        return params;
-                    }
-
-                };
+                                    // Showing error message if something goes wrong.
+                                    Toast.makeText(rootView.getContext(), volleyError.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            })
 
 
-                // Adding the StringRequest object into requestQueue.
-                requestQueue.add(stringRequest);
+                    {
+                        @Override
+                        protected Map<String, String> getParams() {
 
+                            Map<String, String> params = new HashMap<String, String>();
+
+                            params.put("content", ContentHolder);
+                            params.put("rental_spot", Rental_spot_Holder);
+                            params.put("email", useremail);
+                            params.put("level", userLevel);
+                            params.put("exp", userExp);
+
+                            return params;
+                        }
+
+                    };
+
+
+                    // Adding the StringRequest object into requestQueue.
+                    requestQueue.add(stringRequest);
+
+
+                }
+                Intent i = new Intent(getActivity().getApplication(), ProfileActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
 
             }
-
-        }
-    });
+        });
 
 
 
@@ -392,4 +399,3 @@ public class Write_Fragment extends Fragment{
 
 
 }
-

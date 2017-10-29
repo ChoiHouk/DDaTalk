@@ -14,6 +14,7 @@ public class VolleySingleton {
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
 
+
     private VolleySingleton(Context context) {
         requestQueue = Volley.newRequestQueue(context);
 
@@ -35,6 +36,8 @@ public class VolleySingleton {
                         // TODO Auto-generated method stub
                         return cache.get(url);
                     }
+
+
                 });
     }
 

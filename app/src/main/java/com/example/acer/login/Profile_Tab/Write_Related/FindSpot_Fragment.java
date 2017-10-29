@@ -327,8 +327,8 @@ public class FindSpot_Fragment extends Fragment {
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, send);
-                transaction.addToBackStack(null);
-
+//                transaction.addToBackStack(null);
+                transaction.disallowAddToBackStack();
                 transaction.commit();
 
 
@@ -337,7 +337,7 @@ public class FindSpot_Fragment extends Fragment {
         });
         //클릭된 아이템 데이터넘기기
 
-return rootView;
+        return rootView;
     }
 
 }

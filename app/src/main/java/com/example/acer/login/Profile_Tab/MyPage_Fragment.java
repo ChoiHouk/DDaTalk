@@ -105,7 +105,7 @@ public class MyPage_Fragment extends Fragment{
         useremail = SharedPrefManager.getInstance(getActivity().getApplicationContext()).getUserEmail();
 
         ReceiveImg();
-        user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php", mImageLoader);
+        user_profile.setImageUrl("http://104.198.211.126/getUserimgUri.php?email="+useremail, mImageLoader);
 
         textView.setText(username);
 
