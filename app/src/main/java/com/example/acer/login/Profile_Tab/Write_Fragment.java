@@ -282,7 +282,11 @@ public class Write_Fragment extends Fragment{
                     requestQueue.add(stringRequest);
 
 
+<<<<<<< HEAD
                 }
+=======
+            }
+>>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
                 Intent i = new Intent(getActivity().getApplication(), ProfileActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

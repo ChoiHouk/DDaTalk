@@ -74,7 +74,11 @@ public class Home_Fragment extends Fragment {
         progressDialog = new ProgressDialog(rootView.getContext());
         rq = Volley.newRequestQueue(getActivity());
 
+<<<<<<< HEAD
         //    ReceiveImg();
+=======
+    //    ReceiveImg();
+>>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
 
         progressDialog.setMessage("로딩중.. 좀만 기둘려주떼염");
         progressDialog.show();
@@ -164,4 +168,8 @@ public class Home_Fragment extends Fragment {
 
 
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 932402d7b289f5df90f8b0eb52d8d80507724dda
