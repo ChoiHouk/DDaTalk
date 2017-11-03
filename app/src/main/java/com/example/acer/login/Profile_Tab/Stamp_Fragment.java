@@ -1,7 +1,9 @@
 package com.example.acer.login.Profile_Tab;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ClipDrawable;
@@ -9,7 +11,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.acer.login.Login_Related.SharedPrefManager;
-import com.example.acer.login.Profile_Tab.Stamp_Related.Stamp_Fragment_sub;
 import com.example.acer.login.R;
+import com.example.acer.login.Profile_Tab.Stamp_Related.Stamp_CollectActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +53,8 @@ public class Stamp_Fragment extends Fragment {
     int maxExp,Ll,Ee ;
 
 
+    ProgressDialog progressDialog;
+
     public void setProgressBarColor(ProgressBar progressBar, int newColor){
         LayerDrawable ld = (LayerDrawable) progressBar.getProgressDrawable();
         ClipDrawable d1 = (ClipDrawable) ld.findDrawableByLayerId(R.id.progressshape);
@@ -70,27 +73,32 @@ public class Stamp_Fragment extends Fragment {
         levelbar = (ImageView) rootView.findViewById(R.id.levelbar);
         final SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(rootView.getContext());
 
-
+        progressDialog = new ProgressDialog(rootView.getContext());
 // 서브스탬프로 들어가기
         stampcollect = (ImageButton) rootView.findViewById(R.id.stampcollect);
         stampcollect.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 // Create new fragment and transaction
-                Fragment anyFragment = new Stamp_Fragment_sub();
+                /*Fragment anyFragment = new Stamp_Fragment_sub();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, anyFragment);
                 transaction.addToBackStack(null);
 
-                transaction.commit();
+                transaction.commit();*/
+                Intent intent = new Intent(getActivity().getApplication(), Stamp_CollectActivity.class);
+                startActivity(intent);
 
             }
         });
 
+        progressDialog.setMessage("로딩중.. 좀만 기둘려주떼염");
+        progressDialog.show();
         requestQueue = Volley.newRequestQueue(getActivity().getApplication());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://104.198.211.126/getExp.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                progressDialog.dismiss();
                 if(!response.equals("0 results")){
                     Toast.makeText(getActivity().getApplication(),"데이터 가져오기 성공",Toast.LENGTH_LONG).show();
 
